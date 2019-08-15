@@ -18,8 +18,8 @@ var ctx = canvas.getContext("2d");
 var ballRadius = 10;
 var x = canvas.width/2;
 var y = canvas.height-30;
-var dx = 2;
-var dy = -2;
+var dx = 1;
+var dy = -1;
 var paddleHeight = 10;
 var paddleWidth = 75;
 var paddleX = (canvas.width-paddleWidth)/2;
@@ -33,7 +33,7 @@ var brickPadding = 10;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
 var score = 0;
-var lives = 30;
+var lives = 1222;
 
 var bricks = [];
 for(var c=0; c<brickColumnCount; c++) {
@@ -76,13 +76,27 @@ function collisionDetection() {
     for(var r=0; r<brickRowCount; r++) {
       var b = bricks[c][r];
       if(b.status == 1) {
+        // Tapahtui osuma
         if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
           dy = -dy;
+          dx = dx * 1.1;
+          dy = dy * 1.1;
           b.status = 0;
           score++;
+          console.log(dx + " : " + dy);
+          if(score == 3){
+            lives++;
+          }
+          if(score == 10){
+            lives++
+          } 
           if(score == brickRowCount*brickColumnCount) {
-            alert("Voitit Pelin!");
-            document.location.reload();
+            
+           alert("Voitit Pelin!");
+           var vanhatPisteet = window.localStorage.getItem("pisteet")
+           var uudetPisteet = vanhatPisteet + score;
+           window.localStorage.setItem("pisteet",uudetPisteet)
+           document.location.reload();
           }
         }
       }
@@ -155,6 +169,7 @@ function draw() {
       lives--;
       if(!lives) {
         alert("Hävisit Pelin");
+        window.localStorage.setItem("pisteet",0)
         document.location.reload();
       }
       else {
@@ -173,7 +188,8 @@ function draw() {
   else if(leftPressed && paddleX > 0) {
     paddleX -= 7;
   }
-
+  
+  
   x += dx;
   y += dy;
   requestAnimationFrame(draw);
